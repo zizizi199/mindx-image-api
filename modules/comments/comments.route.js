@@ -19,6 +19,12 @@ CommentRouter.post('/', isAuth, async (req, res) => {
       postId,
       userId
     });
+    // bắn notification
+    const cloneComment = JSON.parse(JSON.stringify(newComment)); 
+    global.io.in(`post_${postId}`).emit('notification-new-comment', {
+      ...cloneComment,
+      createdBy: { username: user.username }
+    });
     res.send({ success: 1, data: newComment })
   } catch (err) {
     res.send({ success: 0, message: err.message })
